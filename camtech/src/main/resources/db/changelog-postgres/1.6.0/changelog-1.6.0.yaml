@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 001-face-enrollment-flows.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 1.6.0-tag
+      author: camtech
+      changes:
+        - tagDatabase:
+            tag: 1.6.0

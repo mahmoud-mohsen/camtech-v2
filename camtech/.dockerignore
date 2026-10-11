@@ -1,0 +1,12 @@
+# Only the built jar is needed from target/
+target/*
+!target/camtech-service.jar
+uploads/
+scripts/
+validation_ocr/
+tmp-*/
+*.json
+*.txt
+*.zip
+maven-wrapper-tmp/
+.m2/

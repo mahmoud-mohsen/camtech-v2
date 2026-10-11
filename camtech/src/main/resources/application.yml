@@ -1,0 +1,155 @@
+spring:
+  # Graceful shutdown waits this long for requests in flight (see server.shutdown).
+  lifecycle:
+    timeout-per-shutdown-phase: ${CAMTECH_SHUTDOWN_TIMEOUT:40s}
+  # Scheduled jobs run on their own threads, so a slow webhook run does not hold up session expiry.
+  task:
+    scheduling:
+      pool:
+        size: 4
+  # PostgreSQL for now (local development). The schema is db/changelog-postgres, a PostgreSQL copy of the
+  # Oracle changelog. On PostgreSQL the CamtechPostgreSQLDialect is used automatically (PostgresLobConfig).
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/camtech}
+    username: ${CAMTECH_DATASOURCE_USERNAME:camtech}
+    password: ${CAMTECH_DATASOURCE_PASSWORD:camtech}
+    driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:org.postgresql.Driver}
+    # Connection pool, per replica: keep pool size x replicas below the database's connection limit.
+    hikari:
+      maximum-pool-size: ${CAMTECH_DB_POOL_SIZE:30}
+      minimum-idle: ${CAMTECH_DB_POOL_MIN_IDLE:5}
+      connection-timeout: ${CAMTECH_DB_CONNECTION_TIMEOUT_MS:10000}
+      # Logs a warning (with stack) when a connection is held longer than this: a transaction waiting on I/O.
+      leak-detection-threshold: ${CAMTECH_DB_LEAK_DETECTION_MS:30000}
+  # Oracle (servers): uncomment these and the Oracle liquibase change-log below, and remove the PostgreSQL lines.
+  # datasource:
+  #   url: ${DATASOURCE_URL:jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.52.112.105)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=nqdev01.nqdnonproddbsub.nqdnonprddbvcn.oraclevcn.com)))}
+  #   username: ${CAMTECH_DATASOURCE_USERNAME:CAMTECH}
+  #   password: ${CAMTECH_DATASOURCE_PASSWORD:CAMTECH}
+  #   driver-class-name: ${DATASOURCE_DRIVER_CLASS_NAME:oracle.jdbc.OracleDriver}
+  # The schema is owned by Liquibase; Hibernate never changes it.
+  liquibase:
+    enabled: ${CAMTECH_LIQUIBASE_ENABLED:true}
+    change-log: ${CAMTECH_LIQUIBASE_CHANGELOG:classpath:db/changelog-postgres/db.changelog-master.yaml}
+    # Oracle:
+    # change-log: classpath:db/changelog/db.changelog-master.yaml
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          # Consecutive inserts of the same table (checks, fields) go to the database in batches. No
+          # order_inserts: entities link by plain id columns, so reordering would break foreign keys.
+          batch_size: 50
+        type:
+          preferred_instant_jdbc_type: TIMESTAMP
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 40MB
+
+facetech:
+  model-version-default: ${CAMTECH_MODEL_VERSION_DEFAULT:insightface_buffalo_l}
+  face-match-service-url: ${CAMTECH_FACE_MATCH_SERVICE_URL:http://localhost:8001}
+  face-match-read-timeout-seconds: ${CAMTECH_FACE_MATCH_READ_TIMEOUT_SECONDS:30}
+  # Face match thresholds, attempts and TTLs are tenant settings now (config_param),
+  # managed from the back-office. Seed values: db/changelog/1.0.0/101-seed-tenant.sql.
+
+camtech:
+  tenant-code: ${CAMTECH_TENANT_CODE:NOQODI}
+  cors-allowed-origins: ${CAMTECH_CORS_ALLOWED_ORIGINS:*}
+  sdk-token:
+    ttl-minutes: ${CAMTECH_SDK_TOKEN_TTL_MINUTES:30}
+    max-ttl-minutes: ${CAMTECH_SDK_TOKEN_MAX_TTL_MINUTES:60}
+    # Empty = derived from the result-token key.
+    secret: ${CAMTECH_SDK_TOKEN_SECRET:}
+  security:
+    # Keep false until the mobile and web apps send X-Client-Id / X-Client-Secret and the session token.
+    require-client-credentials: ${CAMTECH_REQUIRE_CLIENT_CREDENTIALS:false}
+    require-session-token: ${CAMTECH_REQUIRE_SESSION_TOKEN:false}
+    default-client-app: ${CAMTECH_DEFAULT_CLIENT_APP:MOBILE_APP}
+  result-token:
+    issuer: ${CAMTECH_RESULT_TOKEN_ISSUER:camtech}
+    ttl-minutes: ${CAMTECH_RESULT_TOKEN_TTL_MINUTES:10}
+    key-id: ${CAMTECH_RESULT_TOKEN_KEY_ID:camtech-1}
+    # PKCS#8 RSA private key (base64) that signs result tokens. Override per environment.
+    private-key: ${CAMTECH_RESULT_TOKEN_PRIVATE_KEY:MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZRlcYs3RD528nPXfJulMF0TI28TZ4FipjLHcaMv1jDIxaOJ9t8s1zc1QOexdzsQ1I2+96DBKyYlAwsNMSKW8RXZx5E8KU42sECC6glEtaxh/0x8Krz0vzlX+w8SH1/ERHt/rL1n/0R8TzQtcC819iwVX9sS5FlHbgGltKJIgembdXnIGAbU2Fmgu5gcP1iVrmyFyIr9JwIcAMPX5LEycwJ4gP3OZI2XQm2A4FuRGf0YH7vmmqiX6Sv+gj7+oVVdhpIzYXbkLuEnKQVqxxEM9S7ls+le8CpqIMT8C18QymYNOUvNaYLtAnlfPRkhRrbrDjmKhUee1zhSUZfbmKcaXtAgMBAAECggEAG0xVIQta7jUjqAB3DmdUiwSPlIuV1lyikrdBd480er9W2vcGQOAipAC3bOJWPfjevGq1mdXue28SuCtfOYbvJ3VldWjgJ6izB1ynzxESrqL53N1EPiXbWw1Lb8W8CJXbVk9tOTMH/H8P5aheL0a4k0XLMgaS07clgF6PXa9dUsquD4mKyEB6qBvY7ZMKkZCUXxZT5KHoUDt21nbFU2lXalPqwI26fK//Zuf0prNdj+O1apUhr4kvrOuXbhGvwM1gqe+IGxTG1DRTC9Ig8MWhrdHv58fzpFqsIBtZaoAqlEj2Xz4Vs59lFUA6ZYAubf0CKoeY3ITcosktexBf5M3umQKBgQDyO2XDjvGZFxcAh0OTH6/sPqL5iE2m3ajAFtRNFMuSJlZwW2G6Hd0kIWrbfS3bnqjV+8SDh3HkDyLz0O/RC4ApU51zGAHmiF+CLFS08BifDgRpmoICHh1NUizFwfMGPFJJiC57jbISeQs03xtjipIqtiA0Q5ETx7DX2O7xJTDvLwKBgQDln8015bEXGFAltBQHB96YZAkwK2tIC/tMYa44S4ZcB0nAsuljL3KUFN4R7hXN/6CEQc8cJtuvd0MHjHu4NQP2nSI1VHWw3vqIa078U29gOlrfnf0PhKStAAttrpxt3qkp2S4hx/tB+7rygPcI+92Tj5mNfpsWftDfnoSeE12VowKBgGWhyEOxsOpjhrIhDpgm/l/ns+dwaewuKkRWD8M7i2IJldDUdn9pUkR7hOMMdXYk7n/Bf6UT6hQeybJ0onoaEi7Et1X356w64Z+zS+MSrbHmZrGMMyoCSpcLeF+MzZN7MadKbP5H6EPZ53rKdSphlIw5F+/1vWQIL8mQakhhK1PfAoGBAKHDjxSuKLClbyjwkL9XOuhOaO6nV9+cmT94/PwpsJC6jamUILjAH07U2JD3EiNaN2GU3uvtMAyPzwfNXwcpSg59KjE5u+OLYiGivzUhLjAzS/uG2FULU9uQUXzGaus31iJmHoqr0ITuawgV9HI+xR0EJ9+3VlhlpI40pSaba+1TAoGBAI7rEDKhS8ev1BA0e+35JpaRv9RrDfsTNXlm2uQykF7o7keTFPoebVldwWH2xeohQQnKy9x80ZdB34NUffpyQvevCO2RN9SNdasXfsSDuutp3tCurC0Zfc8V8RP1HSEPtDd09edMlSfuwDC3KmYZc5jO02y4l/tgrtuEV4/Fzv/d}
+  backoffice:
+    # Password of the first "admin" user (used only when the database has no back-office user yet;
+    # a change is forced at first sign-in). Override per environment.
+    admin-password: ${CAMTECH_BACKOFFICE_ADMIN_PASSWORD:kSJ3JsumuJ6mfzeG}
+    session-hours: ${CAMTECH_BACKOFFICE_SESSION_HOURS:8}
+  jobs:
+    session-expiry-ms: 60000
+    webhook-relay-ms: 5000
+    retention-cron: "0 30 2 * * *"
+
+ocr:
+  provider: ${CAMTECH_OCR_PROVIDER:google-documentai}
+  google:
+    project-id: ${CAMTECH_GOOGLE_CLOUD_PROJECT_ID:camtech-501905}
+    location: ${CAMTECH_GOOGLE_CLOUD_LOCATION:us}
+    processor-id: ${CAMTECH_GOOGLE_PROCESSOR_ID:ee9d0b1273cb5986}
+    credentials-path: ${CAMTECH_GOOGLE_APPLICATION_CREDENTIALS:E:\projects\camtech-v2\camtech\src\main\resources\camtech-501905-7c42ef3daa5a.json}
+    timeout-seconds: ${CAMTECH_GOOGLE_OCR_TIMEOUT_SECONDS:20}
+  paddle:
+    api-url: ${CAMTECH_PADDLE_OCR_API_URL:http://localhost:8000}
+    api-key: ${CAMTECH_PADDLE_OCR_API_KEY:}
+    enabled: ${CAMTECH_PADDLE_OCR_ENABLED:false}
+
+# Images: always OCI Object Storage (S3-compatible API), never the local disk. Everything camtech stores is under
+# <bucket>/camtech/, one folder per case (see MediaKeys). The deployment config overrides these.
+storage:
+  root-folder: ${CAMTECH_STORAGE_ROOT_FOLDER:camtech}
+  # oci on every server; local = a folder on a developer machine (see README, Run everything locally).
+  type: ${CAMTECH_STORAGE_TYPE:local}
+  local-folder: ${CAMTECH_STORAGE_LOCAL_FOLDER:E:\projects\camtech-v2\camtech\local-storage}
+  bucket:
+    name: ${CAMTECH_OCI_BUCKET:noqodi-dev01}
+  host: ${CAMTECH_OCI_HOST:https://axkxkuqa5j3s.compat.objectstorage.me-dubai-1.oraclecloud.com}
+  access-key: ${CAMTECH_OCI_ACCESS_KEY:e24b0068a14a5b3d12555fec633372ce47744cb2}
+  secret-key: ${CAMTECH_OCI_SECRET_KEY:petSB+N3BmuM68B9H+bJZGNswzqLW2V3cQhiDiatMeU=}
+  region: ${CAMTECH_OCI_REGION:me-dubai-1}
+
+server:
+  port: ${CAMTECH_PORT:8080}
+  # On a rolling deploy, requests in flight (a verification can take 30s+) finish before the pod stops.
+  shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 2048
+  tomcat:
+    threads:
+      max: ${CAMTECH_TOMCAT_MAX_THREADS:200}
+    accept-count: ${CAMTECH_TOMCAT_ACCEPT_COUNT:100}
+  # Same path locally and on the servers, so only the host differs.
+  servlet:
+    context-path: ${SERVER_SERVLET_CONTEXT_PATH:/camtech-service}
+
+# /actuator/health/liveness and /actuator/health/readiness for the k8s probes. Only health and info are exposed:
+# the security config lets every request through, so metrics stay off the web unless CAMTECH_ACTUATOR_EXPOSE adds them.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${CAMTECH_ACTUATOR_EXPOSE:health,info}
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+# Every line carries the request id (X-Request-Id, set by CamtechRequestFilter) so one call can be followed end to end.
+# CAMTECH_LOG_LEVEL=DEBUG turns on step-by-step detail (measurements, thresholds, timings) for camtech classes only.
+logging:
+  pattern:
+    level: "%5p [%X{requestId:-}]"
+  level:
+    root: ${CAMTECH_ROOT_LOG_LEVEL:INFO}
+    com.facetech.backend: ${CAMTECH_LOG_LEVEL:INFO}

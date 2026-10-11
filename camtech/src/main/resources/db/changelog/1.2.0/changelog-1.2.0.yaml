@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - include:
+      file: 001-flow-liveness-policy.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 002-session-liveness-mode.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 003-liveness-settings.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 1.2.0-tag
+      author: camtech
+      changes:
+        - tagDatabase:
+            tag: 1.2.0

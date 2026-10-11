@@ -1,0 +1,12 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+insightface==0.7.3
+# Pinned below 1.4: newer albumentations pulls in albucore -> stringzilla,
+# which fails to build on Windows (MSVC internal compiler error). insightface
+# only needs albumentations for training-time augmentation, unused here.
+albumentations<1.4
+onnxruntime==1.18.1
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+python-multipart==0.0.9
+pillow==12.3.0

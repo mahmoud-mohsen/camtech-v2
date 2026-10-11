@@ -1,0 +1,30 @@
+{
+  "name": "camtech-ui",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:sdk": "npm run dev -w @camtech/sdk",
+    "dev:sdk:mock": "npm run dev:mock -w @camtech/sdk",
+    "dev:portal": "npm run dev -w @camtech/portal",
+    "dev:portal:mock": "npm run dev:mock -w @camtech/portal",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.1",
+    "jsdom": "30.1.1"
+  }
+}

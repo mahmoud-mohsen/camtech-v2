@@ -1,0 +1,41 @@
+# camtech schema. Changesets are never edited once applied: add a new file instead.
+# Release folders are applied in order; each ends with a tagDatabase so a release can be rolled back.
+databaseChangeLog:
+  # Seed rows store UTC, like the application (hibernate.jdbc.time_zone=UTC).
+  - property:
+      name: now
+      value: SYS_EXTRACT_UTC(SYSTIMESTAMP)
+      dbms: oracle
+  - property:
+      name: now
+      value: CAST(CURRENT_TIMESTAMP AT TIME ZONE 'UTC' AS TIMESTAMP)
+      dbms: h2
+  # Next id from camtech_seq, for seed rows that are created per tenant.
+  - property:
+      name: nextId
+      value: camtech_seq.NEXTVAL
+      dbms: oracle
+  - property:
+      name: nextId
+      value: NEXT VALUE FOR camtech_seq
+      dbms: h2
+  - include:
+      file: db/changelog/1.0.0/changelog-1.0.0.yaml
+  - include:
+      file: db/changelog/1.1.0/changelog-1.1.0.yaml
+  - include:
+      file: db/changelog/1.2.0/changelog-1.2.0.yaml
+  - include:
+      file: db/changelog/1.3.0/changelog-1.3.0.yaml
+  - include:
+      file: db/changelog/1.4.0/changelog-1.4.0.yaml
+  - include:
+      file: db/changelog/1.5.0/changelog-1.5.0.yaml
+  - include:
+      file: db/changelog/1.6.0/changelog-1.6.0.yaml
+  - include:
+      file: db/changelog/1.7.0/changelog-1.7.0.yaml
+  - include:
+      file: db/changelog/1.8.0/changelog-1.8.0.yaml
+  - include:
+      file: db/changelog/1.9.0/changelog-1.9.0.yaml

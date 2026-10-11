@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 001-move-closer.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 1.4.0-tag
+      author: camtech
+      changes:
+        - tagDatabase:
+            tag: 1.4.0

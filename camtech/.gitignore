@@ -1,0 +1,22 @@
+# Build output
+target/
+# Maven cache used by the pipeline (-Dmaven.repo.local=.m2/repository)
+.m2/repository/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Local config and secrets
+.env
+*.log
+# Google service-account key: supply via GOOGLE_APPLICATION_CREDENTIALS, never commit
+src/main/resources/*.json
+
+# Runtime data
+uploads/
+
+# OCR fixtures from real documents (kept local only) and the tests that need them
+src/test/resources/
+src/test/java/com/facetech/backend/parser/

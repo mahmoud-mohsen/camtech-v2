@@ -1,0 +1,91 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sdk-mock",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev:mock",
+        "-w",
+        "@camtech/sdk",
+        "--prefix",
+        "camtech-ui",
+        "--",
+        "--port",
+        "5185",
+        "--host",
+        "127.0.0.1"
+      ],
+      "port": 5185,
+      "autoPort": false
+    },
+    {
+      "name": "sdk-real",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "-w",
+        "@camtech/sdk",
+        "--prefix",
+        "camtech-ui",
+        "--",
+        "--host",
+        "127.0.0.1"
+      ],
+      "port": 5175,
+      "autoPort": false
+    },
+    {
+      "name": "portal-mock",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev:mock",
+        "-w",
+        "@camtech/portal",
+        "--prefix",
+        "camtech-ui",
+        "--",
+        "--port",
+        "5186",
+        "--host",
+        "127.0.0.1"
+      ],
+      "port": 5186,
+      "autoPort": false
+    },
+    {
+      "name": "backoffice-mock",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev:mock",
+        "--prefix",
+        "backoffice",
+        "--",
+        "--port",
+        "5187",
+        "--host",
+        "127.0.0.1"
+      ],
+      "port": 5187,
+      "autoPort": false
+    },
+    {
+      "name": "portal-real",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "-w", "@camtech/portal", "--prefix", "camtech-ui", "--", "--host", "127.0.0.1"],
+      "port": 5174,
+      "autoPort": false
+    },
+    {
+      "name": "backoffice-real",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "backoffice", "--", "--port", "5173", "--strictPort", "--host", "127.0.0.1"],
+      "port": 5173,
+      "autoPort": false
+    }
+  ]
+}

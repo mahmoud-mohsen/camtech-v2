@@ -1,0 +1,36 @@
+{
+  "name": "@camtech/portal",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:mock": "vite --mode mock",
+    "build": "tsc -p tsconfig.json && vite build",
+    "build:mock": "tsc -p tsconfig.json && vite build --mode mock",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@ant-design/icons": "6.3.4",
+    "@camtech/api-client": "*",
+    "@fontsource-variable/manrope": "5.2.8",
+    "@tanstack/react-query": "5.104.1",
+    "antd": "6.6.5",
+    "dayjs": "1.11.23",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router-dom": "7.18.4",
+    "recharts": "3.10.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.7",
+    "vite": "8.3.3"
+  }
+}

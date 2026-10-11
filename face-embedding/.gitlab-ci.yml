@@ -1,0 +1,44 @@
+variables:
+  SEC_GITLAB_RUNNER_TAGS: "appsec"
+  SEC_DD_PRODUCT_JIRA_PROJECT_KEY: "TNOQPS"
+  SEC_DD_PRODUCT_TYPE: "noqodi"
+  SEC_DD_PRODUCT_NAME: "${SEC_DD_PRODUCT_TYPE}/cloud/face-embedding"
+  SEC_CONTAINER_IMAGE_NAME: "face-embedding:${CI_COMMIT_REF_NAME}"
+  ARTIFACT_LIST: "face-embedding"
+  ARGOCD_REPO_NAME: "cloud-kustoms"
+  ENABLE_TAG_BUILD: "true"
+  ARTIFACT_PATH: "app"
+  DockerFile_INSIDE: "no"
+
+include:
+  - project: "devsecops/appsec"
+    ref: "main"
+    file:
+      - "pipeline/security_sast.yml"
+      - "pipeline/security_container.yml"
+    rules:
+      - if: '$CI_COMMIT_REF_NAME =~ /^release\/.*$/ || $CI_COMMIT_REF_NAME =~ /^develop-\d+$/'
+        when: always
+  - project: "devops-projects/noqodi-pipeline"
+    ref: "main"
+    file:
+      - "gitlab_pipeline_metrics.yml"
+
+# This is a Python service: the shared template's build and unit_test jobs run
+# Maven. These definitions are merged over the template's jobs of the same name,
+# so their rules, tags and the SKIP_STAGE hand-off to the docker job are kept;
+# only the image and the commands change. The image itself (pip install + model
+# download) is built by the template's docker job from the Dockerfile.
+build:
+  image: python:3.11-slim
+  script:
+    - python -m compileall -q app scripts tests
+
+unit_test:
+  image: python:3.11-slim
+  before_script: []
+  script:
+    # Model-free unit tests (crop, softmax, eye aspect ratio). Accuracy on real
+    # captures is measured separately with scripts/validate_against_uploads.py.
+    - pip install --no-cache-dir numpy==1.26.4 opencv-python-headless==4.10.0.84 pillow==12.3.0
+    - python -m unittest discover -s tests -v

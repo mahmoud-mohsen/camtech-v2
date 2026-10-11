@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - include:
+      file: 001-scalability.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 1.9.0-tag
+      author: camtech
+      changes:
+        - tagDatabase:
+            tag: 1.9.0

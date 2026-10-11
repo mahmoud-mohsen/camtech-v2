@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: 001-tenant-users.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 002-document-expiry.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 1.7.0-tag
+      author: camtech
+      changes:
+        - tagDatabase:
+            tag: 1.7.0

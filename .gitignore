@@ -1,0 +1,35 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-lib/
+coverage/
+target/
+.m2/repository/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.venv*/
+venv/
+.insightface/
+
+# Secrets and local config (each project's .gitignore adds its own rules)
+.env
+.env.local
+.env.*.local
+*.local
+camtech/src/main/resources/*.json
+
+# Runtime data and logs
+uploads/
+*.log
+
+# IDE and OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+.claude/settings.local.json

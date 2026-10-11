@@ -1,0 +1,141 @@
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+/* Design tokens as CSS variables (noqodi light; dark values derived). */
+:root {
+  --ct-heading: #0b2545;
+  --ct-text: #292d32;
+  --ct-text-secondary: #475467;
+  --ct-text-tertiary: #667085;
+  --ct-page: #f9fafb;
+  --ct-card: #ffffff;
+  --ct-subtle: #f9fafb;
+  --ct-border: #dbdfe9;
+  --ct-border-subtle: #eaecf0;
+  --ct-brand: #0074c1;
+  --ct-brand-soft: #eff8ff;
+  --ct-brand-strong: #224780;
+  --ct-success: #067647;
+  --ct-success-soft: #ecfdf3;
+  --ct-warning: #b54708;
+  --ct-warning-soft: #fffaeb;
+  --ct-error: #b42318;
+  --ct-error-soft: #fef3f2;
+  --ct-shadow-xs: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  --ct-shadow-md: 0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
+}
+
+[data-theme='dark'] {
+  --ct-heading: #f2f4f7;
+  --ct-text: #e4e7ec;
+  --ct-text-secondary: #a6afbf;
+  --ct-text-tertiary: #8a94a6;
+  --ct-page: #0a1322;
+  --ct-card: #111c2e;
+  --ct-subtle: #15223a;
+  --ct-border: #2c3a52;
+  --ct-border-subtle: #1e2b42;
+  --ct-brand: #3e97ff;
+  --ct-brand-soft: rgba(62, 151, 255, 0.14);
+  --ct-brand-strong: #84caff;
+  --ct-success: #32d583;
+  --ct-success-soft: rgba(50, 213, 131, 0.12);
+  --ct-warning: #fdb022;
+  --ct-warning-soft: rgba(253, 176, 34, 0.12);
+  --ct-error: #f97066;
+  --ct-error-soft: rgba(249, 112, 102, 0.12);
+  --ct-shadow-xs: none;
+  --ct-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+body {
+  font-family: 'Manrope Variable', Manrope, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--ct-page);
+}
+
+/* Cards: hairline border and soft shadow everywhere. */
+.ant-card {
+  border-color: var(--ct-border);
+  box-shadow: var(--ct-shadow-xs);
+}
+.ant-card .ant-card-head-title {
+  font-weight: 700;
+  color: var(--ct-heading);
+}
+
+/* Table header: small caps label style. */
+.ant-table-thead > tr > th {
+  font-size: 12px;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Status pills. */
+.ct-pill.ant-tag {
+  border-radius: 999px;
+  font-weight: 700;
+  padding-inline: 10px;
+  margin-inline-end: 0;
+}
+
+/* Tabular numbers for counts, scores and dates. */
+.tabular,
+.ant-table-cell .tabular,
+.ant-statistic-content {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Shared text helpers (replace repeated inline font styles). */
+.ct-meta {
+  font-size: 13px;
+  color: var(--ct-text-secondary);
+}
+.ct-mono {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+.ct-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ct-text-tertiary);
+}
+.ct-strong {
+  font-weight: 700;
+  color: var(--ct-heading);
+}
+
+.ct-kbd {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  margin-inline-start: 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.rtl-input {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+}
+
+.row-warning td {
+  background: var(--ct-warning-soft);
+}
+
+.row-expired td {
+  background: var(--ct-error-soft);
+}

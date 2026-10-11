@@ -1,0 +1,7 @@
+# Build context of apps/portal/Dockerfile and apps/sdk/Dockerfile is this folder (the npm workspace root).
+**/node_modules
+**/dist
+**/dist-lib
+**/.env.local
+**/.env.*.local
+.claude

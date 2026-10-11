@@ -1,0 +1,25 @@
+variables:
+  SEC_GITLAB_RUNNER_TAGS: "appsec"
+  SEC_DD_PRODUCT_JIRA_PROJECT_KEY: "TNOQPS"
+  SEC_DD_PRODUCT_TYPE: "noqodi"
+  SEC_DD_PRODUCT_NAME: "${SEC_DD_PRODUCT_TYPE}/cloud/camtech-service"
+  SEC_CONTAINER_IMAGE_NAME: "camtech-service:${CI_COMMIT_REF_NAME}"
+  ARTIFACT_LIST: "camtech-service"
+  ARGOCD_REPO_NAME: "cloud-kustoms"
+  ENABLE_TAG_BUILD: "true"
+  ARTIFACT_PATH: "target/camtech-service.jar"
+  DockerFile_INSIDE: "no"
+
+include:
+  - project: "devsecops/appsec"
+    ref: "main"
+    file:
+      - "pipeline/security_sast.yml"
+      - "pipeline/security_container.yml"
+    rules:
+      - if: '$CI_COMMIT_REF_NAME =~ /^release\/.*$/ || $CI_COMMIT_REF_NAME =~ /^develop-\d+$/'
+        when: always
+  - project: "devops-projects/noqodi-pipeline"
+    ref: "main"
+    file:
+      - "gitlab_pipeline_metrics.yml"

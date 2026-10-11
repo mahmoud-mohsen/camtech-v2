@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - include:
+      file: 001-platform.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 002-reference.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 003-party.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 004-document-media.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 005-biometric.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 006-verification.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 007-oracle-json-checks.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 100-seed-reference.sql
+      relativeToChangelogFile: true
+  - include:
+      file: 101-seed-tenant.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 1.0.0-tag
+      author: camtech
+      changes:
+        - tagDatabase:
+            tag: 1.0.0
